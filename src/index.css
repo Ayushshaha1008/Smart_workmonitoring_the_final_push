@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@layer base {
+  button {
+    @apply cursor-pointer;
+  }
+}
+
+@keyframes scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+.animate-scan {
+  animation: scan 2s linear infinite;
+}
+
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}

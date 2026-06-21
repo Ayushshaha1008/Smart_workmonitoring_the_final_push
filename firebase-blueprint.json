@@ -1,0 +1,173 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "Employee or Admin user profile",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "employee", "ceo", "founder", "hr"] },
+        "status": { "type": "string", "enum": ["active", "away", "break", "offline"] },
+        "hourlyRate": { "type": "number" },
+        "lastActive": { "type": "string", "format": "date-time" },
+        "faceDescriptor": { "type": "array", "items": { "type": "number" } },
+        "facePhotoUrl": { "type": "string" },
+        "cameraSnapshotUrl": { "type": "string" },
+        "screenSnapshotUrl": { "type": "string" },
+        "specialCode": { "type": "string" },
+        "department": { "type": "string" },
+        "teamCode": { "type": "string" },
+        "payoutFrequency": { "type": "string", "enum": ["daily", "weekly", "monthly"] },
+        "achievements": { "type": "array", "items": { "type": "string" } },
+        "standardWorkingHours": { "type": "number" },
+        "isCameraOn": { "type": "boolean" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "calls": {
+      "title": "Call",
+      "description": "WebRTC signaling for live feed",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "callerId": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "type": { "type": "string", "enum": ["offer", "answer", "candidate", "hangup"] },
+        "data": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["callerId", "receiverId", "type", "timestamp"]
+    },
+    "alerts": {
+      "title": "Alert",
+      "description": "Security alerts for admins",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "employeeName": { "type": "string" },
+        "type": { "type": "string", "enum": ["face_mismatch", "unauthorized_access"] },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["new", "resolved"] }
+      },
+      "required": ["userId", "type", "timestamp"]
+    },
+    "sessions": {
+      "title": "Work Session",
+      "description": "Daily work session for an employee",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "startTime": { "type": "string", "format": "date-time" },
+        "endTime": { "type": "string", "format": "date-time" },
+        "totalWorkMinutes": { "type": "number" },
+        "totalBreakMinutes": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "completed", "paid"] },
+        "date": { "type": "string" },
+        "paymentId": { "type": "string" }
+      },
+      "required": ["userId", "startTime", "date"]
+    },
+    "payments": {
+      "title": "Payment",
+      "description": "Payroll record for an employee",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "employeeName": { "type": "string" },
+        "amount": { "type": "number" },
+        "bonus": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "approved", "paid", "archived"] },
+        "periodStart": { "type": "string" },
+        "periodEnd": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "status"]
+    },
+    "teams": {
+      "title": "Team",
+      "description": "Group of employees",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "memberIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "memberIds"]
+    },
+    "messages": {
+      "title": "Message",
+      "description": "Direct or group message",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "receiverIds": { "type": "array", "items": { "type": "string" } },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "isRead": { "type": "boolean" },
+        "teamId": { "type": "string" },
+        "attachment": {
+          "type": "object",
+          "properties": {
+            "url": { "type": "string" },
+            "type": { "type": "string" },
+            "name": { "type": "string" }
+          }
+        }
+      },
+      "required": ["senderId", "receiverIds", "content", "timestamp"]
+    },
+    "message_requests": {
+      "title": "Message Request",
+      "description": "Request to message someone outside team/department",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "receiverName": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["senderId", "receiverId", "status", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "User profile data"
+    },
+    "/sessions/{sessionId}": {
+      "schema": "sessions",
+      "description": "Work session logs"
+    },
+    "/payments/{paymentId}": {
+      "schema": "payments",
+      "description": "Payroll records"
+    },
+    "/alerts/{alertId}": {
+      "schema": "alerts",
+      "description": "Security alerts"
+    },
+    "/teams/{teamId}": {
+      "schema": "teams",
+      "description": "Team definitions"
+    },
+    "/messages/{messageId}": {
+      "schema": "messages",
+      "description": "Chat messages"
+    },
+    "/message_requests/{requestId}": {
+      "schema": "message_requests",
+      "description": "Requests for cross-team messaging"
+    },
+    "/calls/{callId}": {
+      "schema": "calls",
+      "description": "WebRTC signaling messages"
+    }
+  }
+}
